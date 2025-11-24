@@ -13,6 +13,6 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: stable
+          deno-version: v2.x
       - name: Run Deno tests
         run: deno test ./deno.test.mts

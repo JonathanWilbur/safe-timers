@@ -8,14 +8,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 25.x
+      - name: Install Typescript
+        run: npm install typescript
       - name: Build (TypeScript)
         run: npx tsc ./index.mts
       - name: Run Node tests

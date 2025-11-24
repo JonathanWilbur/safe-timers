@@ -1,5 +1,6 @@
 {
   "name": "@wildboar/safe-timers",
   "version": "1.0.0",
+  "license": "MIT",
   "exports": "./index.mts"
 }

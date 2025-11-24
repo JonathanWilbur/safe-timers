@@ -1,0 +1,18 @@
+name: Deno tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: stable
+      - name: Run Deno tests
+        run: deno test ./deno.test.mts

@@ -1,0 +1,22 @@
+name: NodeJS tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Build (TypeScript)
+        run: npx tsc ./index.mts
+      - name: Run Node tests
+        run: node --test ./node.tests.mjs

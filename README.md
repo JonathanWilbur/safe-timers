@@ -62,3 +62,8 @@ const interval = setSafeInterval(() => {
 - Test in Bun using: `node --test ./node.tests.mjs` (after building)
 
 Please report any [issues](https://github.com/JonathanWilbur/safe-timers/issues) you see.
+
+## AI Usage Statement
+
+None of the code in this library was produced by AI, but the GitHub Actions
+workflow files were.

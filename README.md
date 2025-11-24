@@ -1,5 +1,7 @@
 # Safe Timers
 
+[![JSR](https://jsr.io/badges/@wildboar/safe-timers)](https://jsr.io/@wildboar/safe-timers)
+
 `setTimeout` and `setInterval`, but they do not execute immediately if given a
 large `delay`: they can handle a virtually infinite delay correctly.
 

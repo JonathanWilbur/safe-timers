@@ -2,8 +2,8 @@ name: Deno tests
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
+    branches:
+      - master
 
 jobs:
   test:

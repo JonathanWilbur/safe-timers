@@ -61,4 +61,4 @@ const interval = setSafeInterval(() => {
 - Test in NodeJS using: `node --test ./node.tests.mjs` (after building)
 - Test in Bun using: `node --test ./node.tests.mjs` (after building)
 
-Please report any [issues]() you see.
+Please report any [issues](https://github.com/JonathanWilbur/safe-timers/issues) you see.

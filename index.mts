@@ -23,48 +23,113 @@ function clamp(interval: number): number {
 	return interval <= maxInterval ? interval : maxInterval;
 }
 
+/**
+ * A safe timeout that correctly handles large delays. This is a safe equivalent
+ * of NodeJS's `Timeout` class.
+ */
 export class SafeTimeout {
 	/**
-	 * **WARNING**: Do not modify this. This is not supposed to be part of the public API.
+	 * @summary Whether this was cancelled
+	 * @description
+	 * 
+	 * If set to `true`, the timeout callback will abort.
+	 * 
+	 * **WARNING**: Do not modify this. This is not supposed to be part of the
+	 * public API.
+	 * 
 	 * @internal
+	 * @type {boolean}
 	 */
 	public cancelled: boolean = false;
 
 	/**
-	 * **WARNING**: Do not modify this. This is not supposed to be part of the public API.
+	 * @summary Callback for cancelling this timeout
+	 * @description
+	 * 
+	 * This intended usage of this is clearing the underlying timeout.
+	 * 
+	 * **WARNING**: Do not modify this. This is not supposed to be part of the
+	 * public API.
+	 *
 	 * @internal
 	 */
 	public onCancel: (() => void) | null = null;
 
+	/**
+	 * @constructor
+	 */
 	constructor() {}
 
+	/**
+	 * @summary Cancel this timeout
+	 * @description
+	 * 
+	 * You should use `clearSafeTimeout` instead of this.
+	 * 
+	 * @internal
+	 */
 	public cancel(): void {
 		this.cancelled = true;
 		this.onCancel?.();
 	}
 }
 
+/**
+ * A safe timeout that correctly handles large delays. This is a safe equivalent
+ * of NodeJS's `Timeout` class.
+ */
 export class SafeInterval {
 	/**
-	 * **WARNING**: Do not modify this. This is not supposed to be part of the public API.
+	 * @summary Whether this was cancelled
+	 * @description
+	 * 
+	 * If set to `true`, the interval callback will abort and no further
+	 * iterations will be scheduled.
+	 * 
+	 * **WARNING**: Do not modify this. This is not supposed to be part of the
+	 * public API.
+	 * 
 	 * @internal
+	 * @type {boolean}
 	 */
 	public cancelled: boolean = false;
 
+	/**
+	 * @summary The safe timeout that underlies the next iteration of this interval
+	 * @description
+	 * 
+	 * Yes, the `SafeInterval` is implemented just using repeated creation of
+	 * `SafeTimeout`s.
+	 */
 	public next: SafeTimeout | null = null;
 
+	/**
+	 * @constructor
+	 */
 	constructor() {}
 
+	/**
+	 * @summary Cancel this interval
+	 * @description
+	 * 
+	 * You should use `clearSafeInterval` instead of this.
+	 * 
+	 * @internal
+	 */
 	public cancel(): void {
 		this.cancelled = true;
 		this.next?.cancel();
 	}
-
-	[Symbol.dispose](): void {
-		this.next?.cancel();
-	}
 }
 
+/**
+ * @summary Create a safe timeout
+ * @param callback The function to call when the timer elapses.
+ * @param delay The number of milliseconds to wait before calling the callback.
+ * @param args Optional arguments to pass when the callback is called.
+ * @returns A `SafeTimeout`, which can be cancelled using `clearSafeTimeout`
+ * @function
+ */
 export function setSafeTimeout<TArgs extends any[]>(callback: (...args: TArgs) => void, delay: number, ...args: TArgs): SafeTimeout {
 	const safe = new SafeTimeout();
 	const deadlineEpochTimeInMillis: number = Date.now() + delay;
@@ -87,10 +152,23 @@ export function setSafeTimeout<TArgs extends any[]>(callback: (...args: TArgs) =
 	return safe;
 }
 
+/**
+ * @summary Clear / cancel a timeout
+ * @param timeout The timeout to clear / cancel
+ * @function
+ */
 export function clearSafeTimeout(timeout: SafeTimeout): void {
 	timeout.cancel();
 }
 
+/**
+ * @summary Create a safe interval
+ * @param callback The function to call when the timer elapses.
+ * @param delay The number of milliseconds to wait before calling the callback.
+ * @param args Optional arguments to pass when the callback is called.
+ * @returns A `SafeInterval`, which can be cancelled using `clearSafeInterval`
+ * @function
+ */
 export function setSafeInterval<TArgs extends any[]>(callback: (...args: TArgs) => void, delay: number, ...args: TArgs): SafeInterval {
 	const safe = new SafeInterval();
 	const realCallback = (...args: TArgs): void => {
@@ -110,6 +188,11 @@ export function setSafeInterval<TArgs extends any[]>(callback: (...args: TArgs) 
 	return safe;
 }
 
+/**
+ * @summary Clear / cancel an interval
+ * @param interval The interval to clear / cancel
+ * @function
+ */
 export function clearSafeInterval(interval: SafeInterval): void {
 	interval.cancel();
 }
